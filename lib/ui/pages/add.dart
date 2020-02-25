@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iremember/services/main-model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 //TODO allow user to pick image and display the preview in UI
 //TODO save new data to firestore (upload image to storage)
@@ -13,32 +15,36 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Add item"),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(10),
-        children: <Widget>[
-          SizedBox(
-            height: 30.0,
+    return ScopedModelDescendant<MainModel>(
+      builder: (context, child, model) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Add item"),
+            backgroundColor: Colors.blueAccent,
           ),
-          _buildTitleField(),
-          SizedBox(
-            height: 20,
+          body: ListView(
+            padding: EdgeInsets.all(10),
+            children: <Widget>[
+              SizedBox(
+                height: 30.0,
+              ),
+              _buildTitleField(),
+              SizedBox(
+                height: 20,
+              ),
+              _buildDescriptionField(),
+              SizedBox(
+                height: 20,
+              ),
+              _buildImgSelectButton(),
+              SizedBox(
+                height: 20,
+              ),
+              _buildSaveButton(context)
+            ],
           ),
-          _buildDescriptionField(),
-          SizedBox(
-            height: 20,
-          ),
-          _buildImgSelectButton(),
-          SizedBox(
-            height: 20,
-          ),
-          _buildSaveButton(context)
-        ],
-      ),
+        );
+      },
     );
   }
 
