@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "569438152382",
-    "firebase_url": "https://quickstart-1568868956798.firebaseio.com",
-    "project_id": "quickstart-1568868956798",
-    "storage_bucket": "quickstart-1568868956798.appspot.com"
+    "project_number": "448458858538",
+    "firebase_url": "https://iremember-7258f.firebaseio.com",
+    "project_id": "iremember-7258f",
+    "storage_bucket": "iremember-7258f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:569438152382:android:7cae125cd3933628fae0ef",
+        "mobilesdk_app_id": "1:448458858538:android:0620a187ea6e10a3f32353",
         "android_client_info": {
           "package_name": "np.com.sahsantosh.iremember"
         }
       },
       "oauth_client": [
         {
-          "client_id": "569438152382-2m45ajiqs6enao04n2no9ij13pf0qftm.apps.googleusercontent.com",
+          "client_id": "448458858538-pk5dj6b855o09vmj6k8ou6osi9gnluov.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAv7TsQmQthCdAAbVjCjXzHAKm3rgc7pDc"
+          "current_key": "AIzaSyCfO7rZJ6S5EIgoJ_ptzAVYvMVc9ZTDYcA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "569438152382-2m45ajiqs6enao04n2no9ij13pf0qftm.apps.googleusercontent.com",
+              "client_id": "448458858538-pk5dj6b855o09vmj6k8ou6osi9gnluov.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

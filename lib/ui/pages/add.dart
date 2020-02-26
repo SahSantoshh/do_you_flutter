@@ -4,12 +4,15 @@ import 'package:scoped_model/scoped_model.dart';
 
 //TODO allow user to pick image and display the preview in UI
 //TODO save new data to firestore (upload image to storage)
-class AddPage extends StatefulWidget {
+class AddItemPage extends StatefulWidget {
+  final MainModel model;
+
+  AddItemPage(this.model);
   @override
-  _AddPageState createState() => _AddPageState();
+  _AddItemPageState createState() => _AddItemPageState();
 }
 
-class _AddPageState extends State<AddPage> {
+class _AddItemPageState extends State<AddItemPage> {
   String title;
   String description;
 

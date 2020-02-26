@@ -1,5 +1,5 @@
 import 'package:scoped_model/scoped_model.dart';
 
-class MainModel extends Model{
-  
-}
+import 'car_service.dart';
+
+class MainModel extends Model with CarService {}

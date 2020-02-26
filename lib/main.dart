@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './ui/pages/home.dart';
 import 'services/main-model.dart';
+import 'ui/pages/add.dart';
 
 /* 
 Please complete the tasks listed in TODOs in different files
@@ -27,9 +28,17 @@ class IRememberApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'IRemember',
-        theme: ThemeData(primaryColor: Colors.deepOrange),
+        theme: ThemeData(
+          primarySwatch: Colors.deepOrange,
+          appBarTheme: AppBarTheme(
+            color: Colors.deepOrange,
+          ),
+          primaryColor: Colors.deepOrange,
+        ),
+        home: HomePage(model),
         routes: {
-          "/": (_) => HomePage(),
+          "/home": (_) => HomePage(model),
+          "/add": (_) => AddItemPage(model)
         },
       ),
     );
