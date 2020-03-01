@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iremember/model/car.dart';
 import 'package:iremember/services/car_service.dart';
@@ -39,7 +38,10 @@ class IRememberApp extends StatelessWidget {
           primaryColor: Colors.deepOrange,
         ),
         home: HomePage(),
-        routes: {"/home": (_) => HomePage(), "/add": (_) => AddItemPage()},
+        routes: {
+          "/home": (_) => HomePage(),
+          "/add": (_) => AddItemPage(),
+        },
       ),
     );
   }

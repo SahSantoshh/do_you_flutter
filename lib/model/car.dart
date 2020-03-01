@@ -19,4 +19,14 @@ class Car {
       image: data['image'] ?? '',
     );
   }
+
+  // just to add item in store
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['title'] = this.title;
+    data['description'] = this.description;
+    data['image'] = this.image;
+
+    return data;
+  }
 }

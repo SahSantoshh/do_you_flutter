@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-//TODO allow user to pick image and display the preview in UI
-//TODO save new data to firestore (upload image to storage)
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:iremember/model/car.dart';
+import 'package:iremember/services/car_service.dart';
+
 class AddItemPage extends StatefulWidget {
   AddItemPage();
   @override
@@ -9,15 +12,26 @@ class AddItemPage extends StatefulWidget {
 }
 
 class _AddItemPageState extends State<AddItemPage> {
-  String title;
-  String description;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
+  String _title;
+  String _description;
+  File _imageFile;
+  bool autoValidateForm = false;
+
+  Future getImageFromGallery() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFile = image;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
-        title: Text("Add item"),
-        backgroundColor: Colors.blueAccent,
+        title: Text("Add Car"),
       ),
       body: ListView(
         padding: EdgeInsets.all(10),
@@ -25,76 +39,167 @@ class _AddItemPageState extends State<AddItemPage> {
           SizedBox(
             height: 30.0,
           ),
-          _buildTitleField(),
-          SizedBox(
-            height: 20,
-          ),
-          _buildDescriptionField(),
-          SizedBox(
-            height: 20,
-          ),
-          _buildImgSelectButton(),
-          SizedBox(
-            height: 20,
-          ),
-          _buildSaveButton(context)
+          Form(
+              key: formKey,
+              autovalidate: autoValidateForm,
+              child: Column(
+                children: <Widget>[
+                  _buildTitleField(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _buildDescriptionField(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _buildImgSelectButton(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _buildSaveButton(context)
+                ],
+              ))
         ],
       ),
     );
   }
 
-  TextField _buildTitleField() {
-    return TextField(
-      onChanged: (value) {
-        setState(() {
-          title = value;
-        });
-      },
+  TextFormField _buildTitleField() {
+    return TextFormField(
+      keyboardType: TextInputType.text,
+      validator: (val) =>
+          (val.isEmpty || val == null) ? 'Title is required' : null,
       decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: "title",
-          prefixIcon: Icon(Icons.title)),
+        border: OutlineInputBorder(),
+        hintText: "title",
+        prefixIcon: Icon(Icons.title),
+      ),
+      onSaved: (val) => _title = val,
     );
   }
 
-  TextField _buildDescriptionField() {
-    return TextField(
-      onChanged: (value) {
-        setState(() {
-          description = value;
-        });
-      },
+  TextFormField _buildDescriptionField() {
+    return TextFormField(
       maxLines: 4,
+      keyboardType: TextInputType.text,
+      validator: (val) =>
+          (val.isEmpty || val == null) ? 'Description is required' : null,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         hintText: "Description",
       ),
+      onSaved: (val) => _description = val,
     );
   }
 
-  SizedBox _buildImgSelectButton() {
-    return SizedBox(
-      height: 50,
+  Widget _buildImgSelectButton() {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          RaisedButton.icon(
+            icon: Icon(
+              Icons.camera,
+              color: Colors.white,
+            ),
+            label: Text("Add Image",
+                style: TextStyle(
+                  color: Colors.white,
+                )),
+            color: Colors.deepOrange,
+            onPressed: () => getImageFromGallery(),
+          ),
+          SizedBox(height: 10),
+          Container(
+            child: (_imageFile == null)
+                ? Center(child: Text('No image selected'))
+                : Image.file(
+                    _imageFile,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(BuildContext context) {
+    return Container(
       width: double.infinity,
+      height: 45,
       child: RaisedButton.icon(
-        icon: Icon(Icons.camera),
-        label: Text("Add Image"),
-        color: Colors.blue,
-        onPressed: () {},
+        icon: Icon(
+          Icons.save,
+          color: Colors.white,
+        ),
+        label: Text(
+          "Save",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        color: Colors.deepOrange,
+        onPressed: () {
+          submitForm(context);
+        },
       ),
     );
   }
 
-  SizedBox _buildSaveButton(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      width: 20.0,
-      child: RaisedButton.icon(
-        icon: Icon(Icons.save),
-        label: Text("Save"),
-        color: Colors.blue,
-        onPressed: () async {},
-      ),
+  submitForm(BuildContext context) {
+    setState(() {
+      autoValidateForm = true;
+    });
+    final form = formKey.currentState;
+    if (_imageFile == null) {
+      showToast("Please select image", context);
+    } else if (form.validate()) {
+      form.save();
+      progressDialog(context);
+      CarService()
+          .addCar(Car(
+              image: _imageFile.path, title: _title, description: _description))
+          .then((onSuccess) {
+        Navigator.pop(context);
+      }).catchError((onError) {
+        showToast("Couldn't add car", context);
+      });
+    } else {
+      showToast('Please fill form', context);
+    }
+  }
+
+  showToast(String message, BuildContext context) {
+    final snackbar = SnackBar(content: Text(message));
+    scaffoldKey.currentState.showSnackBar(snackbar);
+  }
+
+  Future progressDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text("Adding car"),
+              SizedBox(
+                height: 20.0,
+              ),
+              CircularProgressIndicator(
+                // backgroundColor: Constant.ascent,
+                value: null,
+                strokeWidth: 2.0,
+                valueColor: AlwaysStoppedAnimation(Colors.deepOrange),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

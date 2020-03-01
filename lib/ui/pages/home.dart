@@ -15,9 +15,22 @@ class HomePage extends StatelessWidget {
       body: (allCars == null || allCars.length == 0)
           ? Center(child: Text('No cars available'))
           : ListView.builder(
-              itemCount: allCars.length,
-              itemBuilder: (context, index) => oneCar(allCars[index]),
+              itemCount: allCars.length + 1,
+              itemBuilder: (context, index) {
+                if (index >= allCars.length) {
+                  return Container(height: 50);
+                } else {
+                  return oneCar(allCars[index]);
+                }
+              },
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pushNamed(context, '/add');
+        },
+        label: Text('Add Car'),
+        icon: Icon(Icons.directions_car),
+      ),
     );
   }
 
