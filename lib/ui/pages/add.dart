@@ -149,7 +149,7 @@ class _AddItemPageState extends State<AddItemPage> {
     );
   }
 
-  submitForm(BuildContext context) {
+  submitForm(BuildContext context) async {
     setState(() {
       autoValidateForm = true;
     });
@@ -159,14 +159,11 @@ class _AddItemPageState extends State<AddItemPage> {
     } else if (form.validate()) {
       form.save();
       progressDialog(context);
-      CarService()
-          .addCar(Car(
-              image: _imageFile.path, title: _title, description: _description))
-          .then((onSuccess) {
-        Navigator.pop(context);
-      }).catchError((onError) {
-        showToast("Couldn't add car", context);
-      });
+      await CarService().addCar(Car(
+          image: _imageFile.path, title: _title, description: _description));
+
+      Navigator.pop(context);
+      Navigator.pop(context);
     } else {
       showToast('Please fill form', context);
     }
