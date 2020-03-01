@@ -1,45 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:iremember/services/main-model.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:iremember/model/car.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  final MainModel model;
-
-  HomePage(this.model);
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<MainModel>(
-      builder: (context, child, model) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Home"),
-            leading: Icon(Icons.home),
-          ),
-          body: StreamBuilder(
-            stream: Firestore.instance.collection('cars').snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Text('Loading...');
-              if (snapshot.data.documents.length == 0)
-                return const Center(child: Text('No cars....'));
-              return ListView.builder(
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: (context, index) =>
-                    oneCar(snapshot.data.documents[index]),
-              );
-            },
-          ),
-        );
-      },
+    var allCars = Provider.of<List<Car>>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+        leading: Icon(Icons.home),
+      ),
+      body: (allCars == null || allCars.length == 0)
+          ? Center(child: Text('No cars available'))
+          : ListView.builder(
+              itemCount: allCars.length,
+              itemBuilder: (context, index) => oneCar(allCars[index]),
+            ),
     );
   }
 
-  Container oneCar(DocumentSnapshot document) {
+  Container oneCar(Car car) {
     return Container(
       margin: EdgeInsets.only(top: 15, left: 15, right: 15),
       decoration: BoxDecoration(
@@ -54,7 +36,7 @@ class _HomePageState extends State<HomePage> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                document['image'],
+                car.image,
                 fit: BoxFit.cover,
                 height: 150,
                 width: double.infinity,
@@ -68,7 +50,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Text(
-                  "${document['title'][0].toUpperCase()}${document['title'].substring(1)}",
+                  "${car.title[0].toUpperCase()}${car.title.substring(1)}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -78,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  document['description'],
+                  car.description,
                   style: TextStyle(fontSize: 12),
                   textAlign: TextAlign.justify,
                   overflow: TextOverflow.ellipsis,
@@ -98,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             "\u0024" + "5k",
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: Colors.deepOrange,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),

@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iremember/model/car.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-mixin CarService on Model {
-  List<Car> _carsList = [];
-  List<Car> get carsList => _carsList;
+class CarService {
+  final _db = Firestore.instance;
 
-  bool _isLoadingCars = false;
+  Stream<List<Car>> streamCars() {
+    var ref = _db.collection('cars');
 
-  bool get isLoadingCars => _isLoadingCars;
+    return ref.snapshots().map((allCars) =>
+        allCars.documents.map((doc) => Car.fromFireStore(doc)).toList());
+  }
 }

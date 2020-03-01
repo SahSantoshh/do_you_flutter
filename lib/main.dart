@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:iremember/model/car.dart';
+import 'package:iremember/services/car_service.dart';
+import 'package:provider/provider.dart';
 import './ui/pages/home.dart';
-import 'services/main-model.dart';
 import 'ui/pages/add.dart';
 
 /* 
@@ -22,9 +24,10 @@ void main() => runApp(IRememberApp());
 class IRememberApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MainModel model = MainModel();
-    return ScopedModel(
-      model: model,
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<Car>>.value(value: CarService().streamCars()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'IRemember',
@@ -35,11 +38,8 @@ class IRememberApp extends StatelessWidget {
           ),
           primaryColor: Colors.deepOrange,
         ),
-        home: HomePage(model),
-        routes: {
-          "/home": (_) => HomePage(model),
-          "/add": (_) => AddItemPage(model)
-        },
+        home: HomePage(),
+        routes: {"/home": (_) => HomePage(), "/add": (_) => AddItemPage()},
       ),
     );
   }
